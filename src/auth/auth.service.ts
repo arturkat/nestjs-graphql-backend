@@ -6,11 +6,9 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
-
-import { SignUpInput } from './dto/signup-input';
-import { UpdateAuthInput } from './dto/update-auth.input';
+import { SignUpInput } from './dto/signUp.input';
 import { PrismaService } from '../prisma/prisma.service';
-import { SignInInput } from './dto/signin-input';
+import { SignInInput } from './dto/signIn.input';
 
 @Injectable()
 export class AuthService {
@@ -21,10 +19,10 @@ export class AuthService {
   ) {}
 
   async signUp(signUpInput: SignUpInput) {
-    const oldUser = await this.prisma.user.findUnique({
+    const findUser = await this.prisma.user.findUnique({
       where: { email: signUpInput.email },
     });
-    if (oldUser) {
+    if (findUser) {
       throw new BadRequestException(`User with such email already exists`);
     }
 
@@ -116,7 +114,7 @@ export class AuthService {
         email,
       },
       {
-        expiresIn: '1h',
+        expiresIn: '5s',
         secret: this.configService.get('ACCESS_TOKEN_SECRET'),
       },
     );
@@ -140,21 +138,5 @@ export class AuthService {
       where: { id: userId },
       data: { hashedRefreshToken },
     });
-  }
-
-  findAll() {
-    return `This action returns all auth`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthInput: UpdateAuthInput) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
   }
 }

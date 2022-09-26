@@ -2,9 +2,8 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Auth {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type CheckAuthResponse {
+  loggedIn: Boolean!
 }
 
 input CreateSessionInput {
@@ -37,7 +36,6 @@ type Mutation {
   removeTodo(id: Int!): Todo!
   signIn(signInInput: SignInInput!): SignResponse!
   signUp(signUpInput: SignUpInput!): SignResponse!
-  updateAuth(updateAuthInput: UpdateAuthInput!): Auth!
   updateTodo(updateTodoInput: UpdateTodoInput!): Todo!
 }
 
@@ -59,9 +57,7 @@ type Product {
 }
 
 type Query {
-  auth(id: Int!): Auth!
-  checkAuth: Boolean!
-  hello: String!
+  checkAuth: CheckAuthResponse!
   product(id: Int!): Product!
   products: [Product!]!
   sayHello: String!
@@ -89,13 +85,6 @@ input SignUpInput {
 type Todo {
   id: Int!
   title: String!
-}
-
-input UpdateAuthInput {
-  email: String
-  id: Int!
-  password: String
-  username: String
 }
 
 input UpdateTodoInput {

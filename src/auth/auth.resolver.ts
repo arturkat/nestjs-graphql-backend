@@ -1,17 +1,18 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { Auth } from './entities/auth.entity';
-import { SignUpInput } from './dto/signup-input';
-import { UpdateAuthInput } from './dto/update-auth.input';
-import { SignResponse } from './dto/sign-response';
-import { SignInInput } from './dto/signin-input';
-import { LogOutResponse } from './dto/logout.response';
+import { SignUpInput } from './dto/signUp.input';
+import { SignResponse } from './dto/sign.response';
+import { SignInInput } from './dto/signIn.input';
+import { LogOutResponse } from './dto/logOut.response';
 import { Public } from './decorators/public.decorator';
-import { NewTokensResponse } from './dto/new-tokens-response';
+import { NewTokensResponse } from './dto/newTokens.response';
 import { CurrentUserId } from './decorators/currentUserId.decorator';
 import { CurrentUser } from './decorators/currentUser.decorator';
 import { RefreshTokenGuard } from './guards/refreshToken.guard';
 import { UseGuards } from '@nestjs/common';
+import { AccessTokenGuard } from '@src/auth/guards/accessToken.guard';
+import { CheckAuthResponse } from '@src/auth/dto/checkAuth.response';
 
 @Resolver(() => Auth)
 export class AuthResolver {
@@ -45,23 +46,11 @@ export class AuthResolver {
     return this.authService.getNewTokens(userId, refreshToken);
   }
 
-  @Query(() => Boolean)
+  @UseGuards(AccessTokenGuard)
+  @Query(() => CheckAuthResponse)
   checkAuth() {
-    return true;
-  }
-
-  @Query(() => String)
-  hello() {
-    return 'Hello';
-  }
-
-  @Query(() => Auth, { name: 'auth' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.authService.findOne(id);
-  }
-
-  @Mutation(() => Auth)
-  updateAuth(@Args('updateAuthInput') updateAuthInput: UpdateAuthInput) {
-    return this.authService.update(updateAuthInput.id, updateAuthInput);
+    return {
+      loggedIn: true,
+    };
   }
 }
